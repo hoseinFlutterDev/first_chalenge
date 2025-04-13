@@ -64,10 +64,22 @@ class _FirstPageState extends State<FirstPage> {
   }
 
   void _checkAnswer(Uint8List selected) {
-    if (_options.indexOf(selected) ==
-        _options.indexWhere((opt) => opt == _puzzlePieces[_missingIndex])) {
+    final correctPiece = _puzzlePieces[_missingIndex];
+
+    if (selected == correctPiece) {
+      setState(() {
+        // قرار دادن قطعه درست در موقعیت درست
+        _puzzlePieces[_missingIndex] = selected;
+
+        // حذف اون قطعه از گزینه‌ها
+        _options.remove(selected);
+
+        // چون قطعه جایگزین شد، دیگه جای خالی نداریم
+        _missingIndex = -1;
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('آفرین! قطعه درست رو انتخاب کردی.')),
+        SnackBar(content: Text('آفرین! قطعه درست رو سر جاش گذاشتی 🎉')),
       );
     } else {
       ScaffoldMessenger.of(
@@ -84,20 +96,25 @@ class _FirstPageState extends State<FirstPage> {
         physics: NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: gridSize,
-          mainAxisSpacing: 1,
-          crossAxisSpacing: 1,
+          mainAxisSpacing: 0,
+          crossAxisSpacing: 0,
         ),
         itemCount: _puzzlePieces.length,
         itemBuilder: (context, index) {
-          if (index == _missingIndex) {
-            return Container(color: Colors.grey[300]);
+          if (index == _missingIndex && _missingIndex != -1) {
+            return Container();
           }
 
           int row = index ~/ gridSize;
           int col = index % gridSize;
 
           return ClipPath(
-            clipper: PuzzlePieceClipper(row, col, gridSize),
+            clipper: PuzzlePieceClipper(
+              row: row,
+              col: col,
+              totalRows: gridSize,
+              totalCols: gridSize,
+            ),
             child: Image.memory(_puzzlePieces[index], fit: BoxFit.cover),
           );
         },
@@ -188,8 +205,8 @@ class _FirstPageState extends State<FirstPage> {
                           physics: NeverScrollableScrollPhysics(), // حذف اسکرول
                           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
-                            crossAxisSpacing: 6,
-                            mainAxisSpacing: 6,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
                             childAspectRatio:
                                 2.3, // باعث میشه قطعه کمی کشیده‌تر و کوچیک‌تر بشه
                           ),
@@ -200,8 +217,8 @@ class _FirstPageState extends State<FirstPage> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(5),
                                 child: Image.memory(
-                                  _options[index],
-                                  fit: BoxFit.cover,
+                                  _puzzlePieces[index],
+                                  fit: BoxFit.fill, // بهتر از cover برای پازل
                                 ),
                               ),
                             );

@@ -1,77 +1,64 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class PuzzlePieceClipper extends CustomClipper<Path> {
   final int row;
   final int col;
-  final int gridSize;
+  final int totalRows;
+  final int totalCols;
 
-  PuzzlePieceClipper(this.row, this.col, this.gridSize);
+  PuzzlePieceClipper({
+    required this.row,
+    required this.col,
+    required this.totalRows,
+    required this.totalCols,
+  });
 
   @override
   Path getClip(Size size) {
-    final Path path = Path();
-    double pieceWidth = size.width;
-    double pieceHeight = size.height;
+    final path = Path();
+    double w = size.width;
+    double h = size.height;
+    double bumpSize = w * 0.12;
+
+    // جهت دندونه‌ها
+    bool topBump = row > 0;
+    bool bottomBump = row < totalRows - 1;
+    bool leftBump = col > 0;
+    bool rightBump = col < totalCols - 1;
 
     path.moveTo(0, 0);
 
-    // Top
-    if (row == 0) {
-      path.lineTo(pieceWidth, 0);
-    } else {
-      path.lineTo(pieceWidth / 3, 0);
-      path.cubicTo(
-        pieceWidth / 2,
-        -pieceHeight / 6,
-        pieceWidth * 2 / 3,
-        0,
-        pieceWidth,
-        0,
-      );
+    // بالا
+    if (topBump) {
+      path.lineTo(w * 0.3, 0);
+      path.cubicTo(w * 0.4, -bumpSize, w * 0.6, -bumpSize, w * 0.7, 0);
+    }
+    path.lineTo(w, 0);
+
+    // راست
+    if (rightBump) {
+      path.lineTo(w, h * 0.3);
+      path.cubicTo(w + bumpSize, h * 0.4, w + bumpSize, h * 0.6, w, h * 0.7);
+    }
+    path.lineTo(w, h);
+
+    // پایین
+    if (bottomBump) {
+      path.lineTo(w * 0.7, h);
+      path.cubicTo(w * 0.6, h + bumpSize, w * 0.4, h + bumpSize, w * 0.3, h);
+    }
+    path.lineTo(0, h);
+
+    // چپ
+    if (leftBump) {
+      path.lineTo(0, h * 0.7);
+      path.cubicTo(-bumpSize, h * 0.6, -bumpSize, h * 0.4, 0, h * 0.3);
     }
 
-    // Right
-    if (col == gridSize - 1) {
-      path.lineTo(pieceWidth, pieceHeight);
-    } else {
-      path.lineTo(pieceWidth, pieceHeight / 3);
-      path.cubicTo(
-        pieceWidth + pieceWidth / 6,
-        pieceHeight / 2,
-        pieceWidth,
-        pieceHeight * 2 / 3,
-        pieceWidth,
-        pieceHeight,
-      );
-    }
-
-    // Bottom
-    if (row == gridSize - 1) {
-      path.lineTo(0, pieceHeight);
-    } else {
-      path.lineTo(pieceWidth * 2 / 3, pieceHeight);
-      path.cubicTo(
-        pieceWidth / 2,
-        pieceHeight + pieceHeight / 6,
-        pieceWidth / 3,
-        pieceHeight,
-        0,
-        pieceHeight,
-      );
-    }
-
-    // Left
-    if (col == 0) {
-      path.close();
-    } else {
-      path.lineTo(0, pieceHeight * 2 / 3);
-      path.cubicTo(-pieceWidth / 6, pieceHeight / 2, 0, pieceHeight / 3, 0, 0);
-    }
-
+    path.close();
     return path;
   }
 
   @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }

@@ -4,7 +4,6 @@ import 'package:first_challenge/componand/puzzle_piece_clipper.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
-import 'dart:math';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({super.key});
@@ -178,22 +177,21 @@ class _FirstPageState extends State<FirstPage> {
                         vertical: 10,
                       ),
                       child: Container(
-                        height: 110, // کاهش ارتفاع برای جا شدن کامل 6 عکس
+                        height: 120,
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.white24),
                           borderRadius: BorderRadius.circular(10),
                           color: Color.fromARGB(255, 33, 31, 49),
                         ),
                         child: GridView.builder(
-                          padding: const EdgeInsets.all(6),
-                          physics: NeverScrollableScrollPhysics(), // حذف اسکرول
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 6,
-                            mainAxisSpacing: 6,
-                            childAspectRatio:
-                                2.3, // باعث میشه قطعه کمی کشیده‌تر و کوچیک‌تر بشه
-                          ),
+                          padding: const EdgeInsets.all(8),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                                childAspectRatio: 1,
+                              ),
                           itemCount: _options.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
@@ -210,7 +208,6 @@ class _FirstPageState extends State<FirstPage> {
                         ),
                       ),
                     ),
-
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
